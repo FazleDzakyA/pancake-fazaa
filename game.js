@@ -421,7 +421,6 @@
 
       this.initDOM();
       this.initEvents();
-      this.initSpatulaTracker();
       this.renderPancakes();
       this.updateHintButtonUI();
     }
@@ -468,7 +467,6 @@
       this.victorySyrupRig = document.getElementById('victory-syrup-rig');
       this.spatulaSlideGuide = document.getElementById('spatula-slide-guide');
       this.heroInteractiveStack = document.getElementById('hero-interactive-stack');
-      this.spatulaCursor = document.getElementById('spatula-cursor');
     }
 
     initEvents() {
@@ -548,42 +546,6 @@
       });
     }
 
-    // --- Custom Spatula Tracker ---
-    initSpatulaTracker() {
-      let targetX = -100, targetY = -100;
-      let currentX = -100, currentY = -100;
-      let prevX = -100;
-
-      window.addEventListener('pointermove', (e) => {
-        targetX = e.clientX;
-        targetY = e.clientY;
-      });
-
-      const updateSpatula = () => {
-        currentX += (targetX - currentX) * 0.35;
-        currentY += (targetY - currentY) * 0.35;
-
-        const deltaX = currentX - prevX;
-        prevX = currentX;
-        const tilt = Math.max(-28, Math.min(28, -15 + deltaX * 1.8));
-
-        if (!this.spatulaCursor.classList.contains('flipping')) {
-          this.spatulaCursor.style.transform = `translate(${currentX - 25}px, ${currentY - 45}px) rotate(${tilt}deg)`;
-        }
-
-        requestAnimationFrame(updateSpatula);
-      };
-      requestAnimationFrame(updateSpatula);
-    }
-
-    triggerSpatulaSwoop(x, y) {
-      this.spatulaCursor.style.transform = `translate(${x - 30}px, ${y - 30}px) rotate(45deg) scale(1.18)`;
-      this.spatulaCursor.classList.add('flipping');
-      setTimeout(() => {
-        this.spatulaCursor.classList.remove('flipping');
-      }, 350);
-    }
-
     // --- Render Fluffy 6 Pancakes ---
     renderPancakes() {
       this.pancakeStage.innerHTML = '';
@@ -631,17 +593,7 @@
           layer.appendChild(topping);
         }
 
-        // Pointer Enter / Hover
-        layer.addEventListener('pointerenter', () => {
-          this.showSpatulaGuide(layer);
-        });
-
-        // Pointer Leave
-        layer.addEventListener('pointerleave', () => {
-          this.hideSpatulaGuide();
-        });
-
-        // Click / Touch Flip Handler
+        // Click / Touch Flip Handler (NO spatula hover triggers!)
         layer.addEventListener('pointerdown', (e) => {
           e.stopPropagation();
           this.handlePancakeFlip(stackIndex, e);
@@ -657,7 +609,8 @@
       }
     }
 
-    showSpatulaGuide(layerElement) {
+    // --- Hint Guide: Only shown when player clicks '💡 Petunjuk' ---
+    showHintGuide(layerElement) {
       if (this.isFlipping) return;
       const rect = layerElement.getBoundingClientRect();
       const stageRect = this.pancakeStage.getBoundingClientRect();
@@ -667,7 +620,7 @@
       this.spatulaSlideGuide.classList.add('active');
     }
 
-    hideSpatulaGuide() {
+    hideHintGuide() {
       this.spatulaSlideGuide.classList.remove('active');
     }
 
@@ -675,7 +628,7 @@
     handlePancakeFlip(flipIndex, event) {
       if (this.isFlipping) return;
       this.isFlipping = true;
-      this.hideSpatulaGuide();
+      this.hideHintGuide();
 
       document.querySelectorAll('.hint-target').forEach(el => el.classList.remove('hint-target'));
 
@@ -687,7 +640,6 @@
       const rect = event.currentTarget.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
-      this.triggerSpatulaSwoop(centerX, centerY);
 
       // Partikel remah & sparkle
       ParticleEmitter.burst(centerX, centerY, 16);
@@ -768,6 +720,8 @@
     resetVictoryRig() {
       this.victorySyrupRig.classList.remove('active');
       this.pancakeStage.classList.remove('celebrating');
+      this.hideHintGuide();
+      document.querySelectorAll('.hint-target').forEach(el => el.classList.remove('hint-target'));
     }
 
     // --- Shuffle / New Game ---
@@ -775,6 +729,8 @@
       if (this.isFlipping) return;
 
       this.resetVictoryRig();
+      this.hideHintGuide();
+      document.querySelectorAll('.hint-target').forEach(el => el.classList.remove('hint-target'));
       this.hasWonThisRound = false;
 
       // Reset Hint limit to 1 per round!
@@ -868,7 +824,7 @@
       const layers = Array.from(this.pancakeStage.children);
       if (layers[hintIndexToFlip]) {
         layers[hintIndexToFlip].classList.add('hint-target');
-        this.showSpatulaGuide(layers[hintIndexToFlip]);
+        this.showHintGuide(layers[hintIndexToFlip]);
       }
     }
 

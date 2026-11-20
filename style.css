@@ -52,35 +52,8 @@ html, body {
 #ambient-canvas { z-index: 99; }
 #confetti-canvas { z-index: 600; }
 
-/* Custom Spatula Pointer Follower */
-.spatula-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 1000;
-  transform: translate(-30px, -45px) rotate(-15deg);
-  transition: transform 0.08s cubic-bezier(0.25, 1, 0.5, 1);
-  display: none;
-  filter: drop-shadow(0 10px 14px rgba(60, 30, 10, 0.28));
-}
-
 body.in-game-active {
   cursor: default;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  body.in-game-active {
-    cursor: none;
-  }
-  body.in-game-active .spatula-cursor {
-    display: block;
-  }
-}
-
-.spatula-cursor.flipping {
-  transform: translate(-30px, -75px) rotate(45deg) scale(1.18) !important;
-  transition: transform 0.18s cubic-bezier(0.18, 0.89, 0.32, 1.28) !important;
 }
 
 /* App Wrapper */

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PANCAKE FAZAA — Flip pancakes, chill &amp; enjoy.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥞</text></svg>">
+</head>
+<body>
+  <!-- Ambient Kitchen Steam / Floating Sparkles Canvas -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- Confetti Canvas for Victory Celebration -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Custom Spatula Cursor (follows pointer in game mode) -->
+  <div id="spatula-cursor" class="spatula-cursor">
+    <svg viewBox="0 0 120 180" width="75" height="112" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Handle Shadow -->
+      <path d="M56 122 L64 122 L68 175 C68 178 64 180 60 180 C56 180 52 178 52 175 Z" fill="rgba(0,0,0,0.15)"/>
+      <!-- Wooden Handle -->
+      <path d="M55 120 L65 120 L68 172 C68 176 64 178 60 178 C56 178 52 176 52 172 Z" fill="#99582A" stroke="#6F3E1B" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M57 125 L60 125 L61 170 C60 171 58 171 57 170 Z" fill="#BB7843" opacity="0.6"/>
+      <circle cx="60" cy="165" r="3" fill="#FFE8D6"/>
+      <!-- Metal Stem -->
+      <rect x="57" y="86" width="6" height="34" rx="2" fill="#D8E2DC" stroke="#97A9A0" stroke-width="2"/>
+      <rect x="58.5" y="87" width="2" height="32" rx="1" fill="#FFFFFF" opacity="0.8"/>
+      <!-- Spatula Metal Blade -->
+      <path d="M22 25 L98 25 C101 25 103 27 101 32 L88 88 C86 92 82 94 77 94 L43 94 C38 94 34 92 32 88 L19 32 C17 27 19 25 22 25 Z" fill="url(#spatula-metal)" stroke="#83978E" stroke-width="2.5" stroke-linejoin="round"/>
+      <!-- Slits -->
+      <rect x="42" y="38" width="5" height="36" rx="2.5" fill="#A8B7B1" stroke="#7A8E85" stroke-width="1.2"/>
+      <rect x="57.5" y="38" width="5" height="36" rx="2.5" fill="#A8B7B1" stroke="#7A8E85" stroke-width="1.2"/>
+      <rect x="73" y="38" width="5" height="36" rx="2.5" fill="#A8B7B1" stroke="#7A8E85" stroke-width="1.2"/>
+      <!-- Highlight -->
+      <path d="M25 28 L95 28" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+      <defs>
+        <linearGradient id="spatula-metal" x1="20" y1="25" x2="100" y2="94" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FFFFFF"/>
+          <stop offset="0.3" stop-color="#E2ECE9"/>
+          <stop offset="0.7" stop-color="#CBD5D1"/>
+          <stop offset="1" stop-color="#A4B2AD"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <div id="game-app">
+    <!-- ============================================== -->
+    <!-- 1. LANDING SCREEN                              -->
+    <!-- ============================================== -->
+    <section id="landing-screen" class="screen active">
+      <div class="sunbeam-fx"></div>
+      
+      <!-- Top Sound Quick Toggle -->
+      <header class="landing-header">
+        <button id="landing-sound-btn" class="pill-btn sound-toggle-btn" aria-label="Toggle Sound">
+          <span class="btn-icon">🔊</span>
+          <span class="btn-label">Suara: Nyala</span>
+        </button>
+      </header>
+
+      <!-- Center Hero Showcase -->
+      <main class="landing-hero">
+        <div class="brand-container">
+          <div class="logo-stack-badge">
+            <span class="mini-pancake-icon">🥞</span>
+            <span class="cozy-tag">Warm &amp; Fluffy Breakfast</span>
+          </div>
+          <h1 class="main-title">
+            <span class="title-word p-word">PANCAKE</span>
+            <span class="title-word f-word">FAZAA</span>
+          </h1>
+          <p class="subtitle">Flip pancakes, chill &amp; enjoy.</p>
+        </div>
+
+        <!-- Big Delicious Hero Pancake Stack Illustration -->
+        <div class="hero-pancake-display" id="hero-interactive-stack" title="Ketuk untuk bounce!">
+          <div class="floating-berry b1">🍓</div>
+          <div class="floating-berry b2">🫐</div>
+          <div class="floating-berry b3">✨</div>
+          <div class="floating-berry b4">🫐</div>
+
+          <!-- Hero Illustrated SVG Pancake Tower -->
+          <div class="hero-svg-wrapper">
+            <svg viewBox="0 0 340 320" class="hero-pancake-svg">
+              <defs>
+                <filter id="soft-shadow" x="-10%" y="-10%" width="130%" height="130%">
+                  <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#804A26" flood-opacity="0.25"/>
+                </filter>
+                <linearGradient id="plate-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#FFFFFF"/>
+                  <stop offset="70%" stop-color="#F2EBE0"/>
+                  <stop offset="100%" stop-color="#DFD2C0"/>
+                </linearGradient>
+                <linearGradient id="cake-grad-1" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#FED082"/>
+                  <stop offset="60%" stop-color="#E89B48"/>
+                  <stop offset="100%" stop-color="#C26D24"/>
+                </linearGradient>
+                <linearGradient id="cake-grad-2" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#FFDA91"/>
+                  <stop offset="60%" stop-color="#F1A953"/>
+                  <stop offset="100%" stop-color="#CC792E"/>
+                </linearGradient>
+                <linearGradient id="syrup-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#C8631E"/>
+                  <stop offset="50%" stop-color="#9A430E"/>
+                  <stop offset="100%" stop-color="#732C05"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Plate Shadow & Plate -->
+              <ellipse cx="170" cy="275" rx="145" ry="32" fill="#5E381C" opacity="0.18" />
+              <ellipse cx="170" cy="265" rx="140" ry="28" fill="url(#plate-grad)" stroke="#D6C4B0" stroke-width="4"/>
+              <ellipse cx="170" cy="264" rx="118" ry="20" fill="#E8DEC8" stroke="#F5ECE1" stroke-width="2" opacity="0.6"/>
+
+              <!-- Pancake 1 (Bottom, Wide) -->
+              <g class="pancake-svg-item p-bot" filter="url(#soft-shadow)">
+                <ellipse cx="170" cy="235" rx="112" ry="28" fill="#B86620"/>
+                <path d="M58 235 C58 248 78 256 170 256 C262 256 282 248 282 235 L282 222 C282 235 262 243 170 243 C78 243 58 235 58 222 Z" fill="#994D12"/>
+                <ellipse cx="170" cy="222" rx="112" ry="27" fill="url(#cake-grad-1)"/>
+                <ellipse cx="170" cy="219" rx="98" ry="22" fill="#F8BC6E" opacity="0.45"/>
+              </g>
+
+              <!-- Pancake 2 (Middle) -->
+              <g class="pancake-svg-item p-mid" filter="url(#soft-shadow)">
+                <ellipse cx="170" cy="188" rx="100" ry="26" fill="#B86620"/>
+                <path d="M70 188 C70 201 90 208 170 208 C250 208 270 201 270 188 L270 178 C270 191 250 198 170 198 C90 198 70 191 70 178 Z" fill="#994D12"/>
+                <ellipse cx="170" cy="178" rx="100" ry="25" fill="url(#cake-grad-2)"/>
+                <ellipse cx="170" cy="175" rx="88" ry="20" fill="#FFE199" opacity="0.4"/>
+              </g>
+
+              <!-- Pancake 3 (Top) -->
+              <g class="pancake-svg-item p-top" filter="url(#soft-shadow)">
+                <ellipse cx="170" cy="144" rx="90" ry="24" fill="#B86620"/>
+                <path d="M80 144 C80 157 100 164 170 164 C240 164 260 157 260 144 L260 134 C260 147 240 154 170 154 C100 154 80 147 80 134 Z" fill="#994D12"/>
+                <ellipse cx="170" cy="134" rx="90" ry="23" fill="url(#cake-grad-1)"/>
+                <ellipse cx="170" cy="131" rx="78" ry="18" fill="#FFE199" opacity="0.5"/>
+              </g>
+
+              <!-- Dripping Maple Syrup -->
+              <path class="syrup-glow" d="M110 138 C120 150 125 175 128 193 C130 200 137 200 138 190 C140 173 142 160 150 150 C162 160 175 185 178 210 C180 219 189 219 191 209 C195 180 200 155 215 147 C225 153 230 170 232 183 C234 189 240 189 242 182 C245 165 248 147 242 139 C225 131 195 127 170 127 C142 127 120 132 110 138 Z" fill="url(#syrup-grad)" opacity="0.92"/>
+              <!-- Syrup Gloss Highlights -->
+              <path d="M129 170 C129 183 132 190 134 190" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+              <path d="M179 175 C180 197 184 207 187 205" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.65"/>
+              <ellipse cx="160" cy="133" rx="28" ry="8" fill="#FFA34D" opacity="0.35"/>
+
+              <!-- Melty Butter Cube on Top -->
+              <g class="hero-butter-cube">
+                <!-- Butter puddle -->
+                <ellipse cx="170" cy="130" rx="30" ry="12" fill="#FFC933" opacity="0.75"/>
+                <ellipse cx="168" cy="129" rx="22" ry="8" fill="#FFE57F" opacity="0.9"/>
+                <!-- Butter block -->
+                <path d="M156 114 L176 108 L188 115 L168 121 Z" fill="#FFF49C"/>
+                <path d="M156 114 L168 121 L168 130 L156 123 Z" fill="#F8BA1B"/>
+                <path d="M168 121 L188 115 L188 124 L168 130 Z" fill="#E29F05"/>
+                <!-- Butter shiny speck -->
+                <ellipse cx="172" cy="112" rx="3.5" ry="1.8" fill="#FFFFFF" opacity="0.9"/>
+              </g>
+
+              <!-- Fresh Fruit Toppings -->
+              <g transform="translate(112, 118) rotate(-15) scale(0.85)">
+                <path d="M16 2 C24 2 30 10 28 22 C26 32 16 38 15 38 C14 38 4 32 2 22 C0 10 6 2 16 2 Z" fill="#EA3546"/>
+                <path d="M6 8 Q 16 16 24 10" stroke="#FF8A96" stroke-width="2" fill="none" opacity="0.6"/>
+                <circle cx="10" cy="14" r="1.2" fill="#FFE082"/>
+                <circle cx="18" cy="16" r="1.2" fill="#FFE082"/>
+                <path d="M16 4 C14 -2 8 0 8 3 C8 6 12 5 15 5 C17 3 24 0 24 4 C24 7 18 5 16 4 Z" fill="#489B42"/>
+              </g>
+              <g transform="translate(202, 126) scale(0.9)">
+                <circle cx="12" cy="12" r="11" fill="#3D405B"/>
+                <circle cx="10" cy="10" r="10" fill="#4F5D75"/>
+                <ellipse cx="8" cy="7" rx="4" ry="2" fill="#8D99AE" opacity="0.6"/>
+              </g>
+            </svg>
+          </div>
+
+          <div class="click-hint-pill">✨ Sentuh pancake untuk jiggle!</div>
+        </div>
+
+        <!-- Action Section -->
+        <div class="landing-actions">
+          <button id="btn-play-now" class="play-btn-primary">
+            <span class="btn-shine"></span>
+            <span class="btn-text">PLAY NOW</span>
+            <span class="btn-arrow">➔</span>
+          </button>
+          <p class="cozy-caption">"Flip it. Stack it. Enjoy it."</p>
+        </div>
+      </main>
+
+      <div class="tablecloth-border"></div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 2. PLAYER NAME INPUT MODAL                     -->
+    <!-- ============================================== -->
+    <div id="name-modal" class="modal-backdrop">
+      <div class="modal-card">
+        <button id="modal-close-btn" class="modal-close" aria-label="Tutup">✕</button>
+        <div class="modal-header-icon">🥞</div>
+        <h2 class="modal-title">Who's flipping today?</h2>
+        <p class="modal-desc">Masukkan nama chef kamu untuk mulai membalik pancake!</p>
+
+        <form id="name-form" onsubmit="return false;">
+          <div class="input-wrapper">
+            <span class="input-icon">🍳</span>
+            <input type="text" id="player-name-input" maxlength="16" placeholder="Type your nickname..." autocomplete="off">
+          </div>
+          <button type="submit" id="btn-lets-flip" class="flip-btn-cta">
+            <span class="btn-text">LET'S FLIP!</span>
+            <span class="btn-arrow">✨</span>
+          </button>
+        </form>
+        <p class="modal-foot-note">Kosongkan untuk bermain sebagai <em>Pancake Lover</em></p>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- 3. MAIN GAME SCREEN                            -->
+    <!-- ============================================== -->
+    <section id="game-screen" class="screen">
+      <!-- Game Header Bar -->
+      <header class="game-header">
+        <div class="header-left">
+          <button id="btn-back-home" class="icon-text-btn" title="Kembali ke Menu Utama">
+            <span class="icon">🏡</span>
+            <span class="label">Menu</span>
+          </button>
+          <div class="game-brand-pill">
+            <span class="icon">🥞</span>
+            <span class="brand-text">FAZAA</span>
+          </div>
+        </div>
+
+        <div class="header-center">
+          <div class="player-badge">
+            <span class="chef-hat">👨‍🍳</span>
+            <span id="player-display-name" class="player-name">Fazaa</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="flip-counter-pill" title="Jumlah Flip yang dilakukan">
+            <span class="flip-icon">🔄</span>
+            <span class="count-num" id="flip-count-display">0</span>
+            <span class="count-unit">Flips</span>
+          </div>
+          <button id="btn-reset-stack" class="icon-text-btn btn-accent" title="Acak ulang tumpukan pancake">
+            <span class="icon">🔀</span>
+            <span class="label">Acak</span>
+          </button>
+          <button id="game-sound-btn" class="icon-text-btn sound-toggle-btn" title="Toggle Suara">
+            <span class="icon" id="sound-icon-indicator">🔊</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Mission / Target Objective Bar (Clear Gameplay Goal!) -->
+      <div class="mission-bar">
+        <div class="mission-info">
+          <span class="mission-icon">🎯</span>
+          <span class="mission-text" id="mission-text-label">
+            <strong>Misi Chef:</strong> Susun 6 pancake dari <strong>TERBESAR (bawah)</strong> ke <strong>TERKECIL (atas)!</strong>
+          </span>
+        </div>
+        <div class="mission-controls">
+          <button id="btn-mode-toggle" class="mode-toggle-btn" title="Ganti Mode Permainan">
+            <span id="mode-icon">🏆</span>
+            <span id="mode-text">Tantangan</span>
+          </button>
+          <button id="btn-hint" class="hint-action-btn" title="Minta petunjuk flip selanjutnya!">
+            <span>💡</span>
+            <span>Petunjuk</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Welcome Toast Overlay -->
+      <div id="welcome-toast" class="welcome-toast">
+        <span class="toast-icon">🥞</span>
+        <span id="welcome-msg-text">Welcome, Fazaa!</span>
+      </div>
+
+      <!-- Main Game Kitchen Workspace -->
+      <main class="kitchen-workspace">
+        <div class="kitchen-environment">
+          <div class="kitchen-shelf">
+            <div class="shelf-item honey-jar" title="Madu Lezat">🍯</div>
+            <div class="shelf-item berry-bowl" title="Stroberi Segar">🍓</div>
+            <div class="shelf-item coffee-mug" title="Kopi Hangat">☕</div>
+            <div class="shelf-item plant">🌿</div>
+          </div>
+        </div>
+
+        <!-- Breakfast Table Surface -->
+        <div class="kitchen-table-surface">
+          <!-- Cast Iron Skillet / Golden Breakfast Platter -->
+          <div class="skillet-container" id="skillet-area">
+            <div class="skillet-shadow"></div>
+            
+            <!-- Skillet / Pan SVG Art -->
+            <div class="skillet-dish">
+              <svg viewBox="0 0 460 280" class="skillet-svg" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <radialGradient id="pan-rim" cx="50%" cy="40%" r="55%">
+                    <stop offset="0%" stop-color="#3A3845"/>
+                    <stop offset="75%" stop-color="#24222E"/>
+                    <stop offset="100%" stop-color="#16151E"/>
+                  </radialGradient>
+                  <radialGradient id="pan-interior" cx="50%" cy="45%" r="50%">
+                    <stop offset="0%" stop-color="#4C495D"/>
+                    <stop offset="60%" stop-color="#32303D"/>
+                    <stop offset="100%" stop-color="#211F28"/>
+                  </radialGradient>
+                  <linearGradient id="pan-handle" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#B87333"/>
+                    <stop offset="50%" stop-color="#D48C46"/>
+                    <stop offset="100%" stop-color="#8C4E1A"/>
+                  </linearGradient>
+                </defs>
+                <!-- Pan handle right -->
+                <path d="M390 138 C435 138 452 143 452 150 C452 157 435 162 390 162 Z" fill="url(#pan-handle)" stroke="#592E0B" stroke-width="3"/>
+                <ellipse cx="442" cy="150" rx="3.5" ry="5" fill="#2E1705"/>
+                <!-- Outer Pan Rim -->
+                <ellipse cx="225" cy="150" rx="190" ry="85" fill="url(#pan-rim)" stroke="#524F60" stroke-width="4"/>
+                <!-- Inner Pan Cooking Surface -->
+                <ellipse cx="225" cy="152" rx="168" ry="72" fill="url(#pan-interior)"/>
+                <!-- Heat Sheen -->
+                <ellipse cx="225" cy="150" rx="135" ry="52" fill="#FFE8C2" opacity="0.04"/>
+              </svg>
+            </div>
+
+            <!-- Animated Syrup Pitcher / Pouring Rig for Victory Animation -->
+            <div id="victory-syrup-rig" class="victory-syrup-rig">
+              <div class="syrup-pitcher">
+                <svg viewBox="0 0 100 120" width="85" height="102" fill="none">
+                  <!-- Pitcher body -->
+                  <path d="M35 25 L65 25 L75 85 C75 98 62 108 50 108 C38 108 25 98 25 85 Z" fill="#FFC300" opacity="0.85" stroke="#E69500" stroke-width="3"/>
+                  <!-- Maple syrup fill -->
+                  <path d="M28 60 C38 65 62 55 72 60 L75 85 C75 98 62 108 50 108 C38 108 25 98 25 85 Z" fill="#9E4302"/>
+                  <!-- Pitcher spout -->
+                  <path d="M28 25 L12 28 C10 32 16 38 26 36 Z" fill="#FFC300" stroke="#E69500" stroke-width="2.5"/>
+                  <!-- Glass highlight -->
+                  <path d="M36 35 L40 92" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.75"/>
+                  <!-- Pitcher handle -->
+                  <path d="M68 38 C86 38 88 78 68 82" stroke="#E69500" stroke-width="5" stroke-linecap="round" fill="none"/>
+                  <path d="M68 38 C86 38 88 78 68 82" stroke="#FFE066" stroke-width="2" stroke-linecap="round" fill="none"/>
+                  <!-- Label -->
+                  <ellipse cx="50" cy="80" rx="14" ry="10" fill="#FFF4D1" stroke="#D18320" stroke-width="1.5"/>
+                  <text x="50" y="84" font-size="12" font-weight="bold" fill="#753000" text-anchor="middle" font-family="sans-serif">🍁</text>
+                </svg>
+              </div>
+              <div class="syrup-stream"></div>
+              <div class="syrup-splash-drops"></div>
+            </div>
+
+            <!-- Spatula Indicator Line / Ghost Spatula that slips under hovered pancake -->
+            <div id="spatula-slide-guide" class="spatula-slide-guide">
+              <span class="guide-label">BALIK DARI SINI 🥞⬆️</span>
+              <div class="guide-blade"></div>
+            </div>
+
+            <!-- Fluffy Pancake Stack Container (Holds 6 Fluffy Pancakes!) -->
+            <div class="pancake-stack-stage" id="pancake-stack-stage">
+              <!-- Dynamically generated thick & fluffy 3D pancakes -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Guidance / Relaxation Banner -->
+        <footer class="game-instruction-banner">
+          <div class="hint-main">
+            <span class="hint-icon">🥄</span>
+            <span class="hint-bold">Ketuk pancake manapun untuk menyelipkan spatula &amp; membalik tumpukan di atasnya!</span>
+          </div>
+          <div class="hint-sub">
+            Flip it. Stack it. Enjoy it. 🍯
+          </div>
+        </footer>
+      </main>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 4. VICTORY CELEBRATION MODAL                   -->
+    <!-- ============================================== -->
+    <div id="victory-modal" class="modal-backdrop">
+      <div class="modal-card victory-card">
+        <div class="victory-confetti-icon">🎉🥞🏆</div>
+        <h2 class="victory-title">STACK 6 PANCAKE SEMPURNA!</h2>
+        <p class="victory-subtitle">Tumpukan sarapan pancake berhasil tersusun cantik &amp; rapi!</p>
+
+        <div class="victory-stars">
+          <span class="star s1">⭐</span>
+          <span class="star s2">⭐</span>
+          <span class="star s3">⭐</span>
+        </div>
+
+        <div class="victory-stats-box">
+          <div class="v-stat">
+            <span class="v-label">Total Flip:</span>
+            <span class="v-val" id="victory-flips">5</span>
+          </div>
+          <div class="v-stat">
+            <span class="v-label">Status Chef:</span>
+            <span class="v-val highlight-chef" id="victory-chef-rank">Master Pancake Chef 👨‍🍳</span>
+          </div>
+        </div>
+
+        <div class="victory-actions">
+          <button id="btn-victory-replay" class="flip-btn-cta">
+            <span>🔀 Acak Lagi &amp; Mainkan</span>
+          </button>
+          <button id="btn-victory-chill" class="pill-btn">
+            <span>☕ Lanjut Mode Santai</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
